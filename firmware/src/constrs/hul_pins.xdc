@@ -366,3 +366,5 @@ set_property IOSTANDARD LVCMOS33 [get_ports USER_RST_B]
 #set_property IOSTANDARD LVCMOS33 [get_ports J0DS*]
 set_property IOSTANDARD LVCMOS33 [get_ports J0DC*]
 #set_property IOSTANDARD LVCMOS33 [get_ports J0RC*]
+
+

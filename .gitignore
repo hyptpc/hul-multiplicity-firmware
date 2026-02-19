@@ -1,94 +1,43 @@
-# Consolidated .gitignore for multiplicity-logic
+# Vivado Generated Files
+*.jou
+*.log
+*.str
+*.xpr
+*.os
+*.pb
+*.wdb
+*.wcfg
+*.sh
+*.zip
+*.bit
+*.bin
+*.mcs
+*.prm
 
-# Common ignores
+# Vivado Directories
+.Xil/
+.runs/
+.sim/
+.ip_user_files/
+.cache/
+.hw/
+project/
+firmware/project/
+test/firmware/project/
+
+# SiTCP proprietary files (User must populate this directory manually)
+# Ignore everything in sitcp folder except .gitkeep
+firmware/src/sitcp/*
+!firmware/src/sitcp/.gitkeep
+
+# Temporary Files
+*.bak
+*~
 .DS_Store
 
-# ==============================================================================
-# slow-control
-# ==============================================================================
-# Ignore logs recursively in slow-control
-slow-control/**/*.log
-
-
-# ==============================================================================
-# firmware
-# ==============================================================================
-# Ignore everything in firmware by default
-firmware/*
-# But keep directories
-!firmware/*/
-!firmware/.gitignore
-
-# Whitelist Source files:
-!firmware/**/*.vhd
-!firmware/**/*.v
-!firmware/**/*.bd
-!firmware/**/*.edif
-
-# Whitelist IP files
-# .xci: synthesis and implemented not possible (keep)
-!firmware/**/*.xci
-# .dcp (checkpoint files)
-!firmware/**/*.dcp
-!firmware/**/*.vds
-!firmware/**/*.pb
-!firmware/**/*.ui
-!firmware/**/*.ooc
-
-# Whitelist System Generator
-!firmware/**/*.mdl
-!firmware/**/*.slx
-!firmware/**/*.bxml
-
-# Whitelist Simulation logic analyzer
-!firmware/**/*.wcfg
-!firmware/**/*.coe
-
-# Whitelist MIG
-!firmware/**/*.prj
-!firmware/**/*.mem
-
-# Whitelist Project files
-!firmware/**/*.xpr
-!firmware/**/*.xml
-
-# Whitelist Constraint files
-!firmware/**/*.xdc
-
-# Whitelist TCL files
-!firmware/**/*.tcl
-
-# Whitelist Journal files
-!firmware/**/*.jou
-
-# Whitelist Reports
-!firmware/**/*.rpt
-!firmware/**/*.txt
-!firmware/**/*.vdi
-
-# Whitelist C-files
-!firmware/**/*.c
-!firmware/**/*.h
-!firmware/**/*.elf
-!firmware/**/*.bmm
-!firmware/**/*.xmp
-
-# Explicitly Ignore Project directories (overrides whitelisting if matched, but * is already ignoring. 
-# These are redundant if firmware/* is active, UNLESS !firmware/*/ kept them.
-# !firmware/*/ keeps directories, so we must explicitly ignore build directories.)
-firmware/*.cache/
-firmware/*.hw/
-firmware/*.ip_user_files/
-firmware/*.sim/
-firmware/*.runs/
-
-# Explicitly ignore generated binary files
-firmware/*.bit/
-firmware/*.mcs/
-
-# Ignore SiTCP (Forbidden to distribute)
-firmware/multiplicity-logic.srcs/sources_1/SiTCP/*
-
-# Ignore IP generated files but keep xci (complex pattern)
-firmware/*.srcs/sources_1/ip/*/*
-!firmware/*.srcs/sources_1/ip/*/*.xci
+# Slow Control - Old parameters and build artifacts
+slow-control/old/
+slow-control/src/build/
+slow-control/bin/
+*.o
+*.d

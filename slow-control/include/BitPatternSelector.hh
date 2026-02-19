@@ -7,6 +7,7 @@
 
 #include <bitset>
 #include <cstdint>
+#include <vector>
 
 //_____________________________________________________________________________
 class BitPatternSelector : Uncopyable<BitPatternSelector>

@@ -86,7 +86,7 @@ architecture Behavioral of toplevel is
   -- DIP --
   signal dip_sw : std_logic_vector(kNumOfDipSwitch-1 downto 0);
 
-  -- Finxed input ports --
+  -- Fixed input ports --
   signal in_fixed_u : std_logic_vector(kNumOfFixedU-1 downto 0);
   signal in_fixed_d : std_logic_vector(kNumOfFixedD-1 downto 0);
   signal sync_fixed_u : std_logic_vector(kNumOfFixedU-1 downto 0);
@@ -115,7 +115,11 @@ architecture Behavioral of toplevel is
   signal det_raw         : std_logic_vector(kNumOfSegDetector-1 downto 0);
   signal det_multiplexed : std_logic_vector(kNumOfNIMOUT-1 downto 0);
 
-  -- Synchroniyzer --
+  -- Add --
+  signal clkosc_ibuf : std_logic;
+  signal clk_bufg    : std_logic;
+
+  -- Synchronizer --
   component Synchronizer is
     Port (
       clock : in std_logic;
@@ -211,13 +215,13 @@ architecture Behavioral of toplevel is
       EXT_TCP_PORT   : in std_logic_vector(15 downto 0); --: TCP port #[15:0]
       EXT_RBCP_PORT  : in std_logic_vector(15 downto 0); --: RBCP port #[15:0]
       PHY_ADDR       : in std_logic_vector(4 downto 0);  --: PHY-device MIF address[4:0]
-      MY_MAC_ADDR    : out std_logic_vector(47 downto 0); -- My MAC adder [47:0]
+--      MY_MAC_ADDR    : out std_logic_vector(47 downto 0); -- My MAC adder [47:0]
       -- EEPROM
       EEPROM_CS      : out std_logic; --: Chip select
       EEPROM_SK      : out std_logic; --: Serial data clock
       EEPROM_DI      : out    std_logic; --: Serial write data
       EEPROM_DO      : in std_logic; --: Serial read data
-      --    user data, intialial values are stored in the EEPROM, 0xFFFF_FC3C-3F
+      --    user data, initial values are stored in the EEPROM, 0xFFFF_FC3C-3F
       USR_REG_X3C    : out    std_logic_vector(7 downto 0); --: Stored at 0xFFFF_FF3C
       USR_REG_X3D    : out    std_logic_vector(7 downto 0); --: Stored at 0xFFFF_FF3D
       USR_REG_X3E    : out    std_logic_vector(7 downto 0); --: Stored at 0xFFFF_FF3E
@@ -283,10 +287,12 @@ architecture Behavioral of toplevel is
   -- Clock --
   signal clk_400MHz     : std_logic;
   signal clk_100MHz     : std_logic;
+  attribute keep of clk_100MHz : signal is "true";
   signal clk_gtx        : std_logic;
   signal clk_int        : std_logic;
   signal clk_trg_locked : std_logic;
   signal clk_10MHz      : std_logic;
+  attribute keep of clk_10MHz : signal is "true";
 
   component clk_wiz_0
     port(
@@ -447,7 +453,6 @@ begin
       EXT_TCP_PORT           => X"0000", --: TCP port #[15:0]
       EXT_RBCP_PORT          => X"0000", --: RBCP port #[15:0]
       PHY_ADDR               => "00000", --: PHY-device MIF address[4:0]
-      MY_MAC_ADDR            => open,
       -- EEPROM
       EEPROM_CS            => PROM_CS, --: Chip select
       EEPROM_SK            => PROM_SK, --: Serial data clock
@@ -483,7 +488,7 @@ begin
       -- TCP connection control
       TCP_OPEN_REQ          => '0', -- : Reserved input, shoud be 0
       TCP_OPEN_ACK          => tcp_isActive, --: Acknowledge for open (=Socket busy)
-      --    TCP_ERROR           : out    std_logic; --: TCP error, its active period is equal to MSL
+      TCP_ERROR             => open, --: TCP error, its active period is equal to MSL
       TCP_CLOSE_REQ         => close_req, --: Connection close request
       TCP_CLOSE_ACK         => close_act, -- : Acknowledge for closing
       -- FIFO I/F
@@ -503,7 +508,7 @@ begin
       RBCP_RD               => rbcp_rd -- : Read data[7:0]
       );
 
-  u_GlobalSiTCP_Inst : GlobalSiTCPManager
+  u_GlobalSiTCP_Inst : entity mylib.GlobalSiTCPManager
     port map(
       CLK           => clk_130MHz,
       RST           => system_reset,
@@ -513,10 +518,23 @@ begin
       rstFromTCP    => open
       );
 
+  u_ibuf_clkosc : IBUF
+    port map (
+      I => CLKOSC,        -- External input port
+      O => clkosc_ibuf    -- Buffer output to internal signal
+    );
+    
+  u_bufg_clkosc : BUFG
+    port map (
+      I => clkosc_ibuf,
+      O => clk_bufg
+    );
+        
   -- Clock inst Trigger -------------------------------------------------------
   u_ClkMan_Trg_Inst   : clk_wiz_0
     port map(
-      clk_in1     => CLKOSC,
+--      clk_in1     => CLKOSC,
+      clk_in1     => clk_bufg,
       clk_trg     => clk_400MHz,
       clk_gtx     => clk_gtx,
       clk_int     => clk_100MHz,
@@ -528,7 +546,8 @@ begin
   -- Clock inst System -----------------------------------------------------------------
   u_ClkMan_Sys_Inst   : clk_wiz_1
     port map(
-      clk_in1     => clk_100MHz,
+--      clk_in1     => clk_100MHz,
+      clk_in1     => clk_bufg,
       clk_sys     => clk_130MHz,
       reset       => '0',
       sys_locked  => clk_sys_locked

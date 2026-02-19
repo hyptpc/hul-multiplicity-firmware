@@ -4,6 +4,8 @@
 #define FPGA_MODULE_HH
 
 #include <vector>
+#include <cstdint>
+#include <string>
 
 #include "Uncopyable.hh"
 #include "UDPRBCP.hh"

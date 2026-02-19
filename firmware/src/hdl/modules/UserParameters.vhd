@@ -6,7 +6,7 @@ use ieee.std_logic_arith.all;
 
 -------------------------------------------------------------------------------
 package addressmap is
-  constant kVersion : std_logic_vector(31 downto 0) := x"4d700100";
+  constant kVersion : std_logic_vector(31 downto 0) := x"4d700101";
   -- Board
   constant kNumOfFixedU     : natural := 32;
   constant kNumOfFixedD     : natural := 32;
