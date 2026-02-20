@@ -68,7 +68,7 @@ entity toplevel is
     -- User I/O ---------------------------------------------------------------
     USER_RST_B : in std_logic;
     NIMIN      : in std_logic_vector(kNumOfNIMIN downto 1);
-    NIMOUT     : out std_logic_vector(kNumOfNIMOUT downto 1)
+    NIMOUT     : out std_logic_vector(4 downto 1)
     );
 end toplevel;
 
@@ -384,9 +384,9 @@ begin
 
   -- NIMOUT/LEDOUT --
   NIMOUT(1) <= det_multiplexed(0) and gate;
-  NIMOUT(2) <= mon_1 and gate;
-  NIMOUT(3) <= mon_2 and gate;
-  NIMOUT(4) <= mon_3 and gate;
+  NIMOUT(2) <= mon_1;
+  NIMOUT(3) <= mon_2;
+  NIMOUT(4) <= mon_3;
   LEDOUT(0) <= gate;
 
   -- J0DC --
@@ -558,5 +558,10 @@ begin
       reset       => '0',
       sys_locked  => clk_sys_locked
       );
+
+  -- Monitor signals --
+    mon_1 <= clk_400MHz;
+    mon_2 <= clk_130MHz;
+    mon_3 <= sync_fixed_u(0);
 
 end Behavioral;
